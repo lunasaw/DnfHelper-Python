@@ -247,7 +247,13 @@ class Auto:
 
         # 随机处理
         breaks = config().getint("自动配置", "休息次数")
-        run_time.modulo_algorithm(cls.completedNum, breaks)
+        remainder = run_time.modulo_algorithm(cls.completedNum, breaks)
+        if remainder == 0:
+            change = config().getint("自动配置", "休息切角")
+            if change == 1:
+                # 切换角色
+                cls.return_role()
+                return
 
         # 1 剧情 2 搬砖
         auto_model = config().getint("自动配置", "自动模式")
