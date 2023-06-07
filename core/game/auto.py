@@ -218,7 +218,9 @@ class Auto:
 
         time.sleep(0.2)
         cls.pack.select_role(init.global_data.completed_role)
-
+        # 角色技能
+        init.skill_data = {}
+        # 角色名称
         role_name = person_base.get_role_name()
         logger.info("进入角色 {} ".format(role_name), 2)
         time.sleep(0.5)
