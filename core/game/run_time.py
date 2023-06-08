@@ -11,7 +11,7 @@ start_time = int(round(time.time()))
 # 通关次数做取余
 def modulo_algorithm(value, size):
     if value <= 0:
-        return 0
+        return 1
     remainder = value % size  # 取余操作
 
     if remainder == 0:

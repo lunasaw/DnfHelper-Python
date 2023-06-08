@@ -5,6 +5,17 @@ from core.game import call, address, mem
 from core.game.addr import address_all
 import time
 
+data = {
+    '研究所': 400001566,
+    '森林': 400001567,
+    '摇篮': 100002974,
+    '海伯伦': 100002969,
+    '白色大地': 100002951,
+    '圣殿': 100002953,
+    '恩山': 100002963,
+    '昆法特': 100002706
+}
+
 
 # 地图起始地址
 def get_map_start_and_end():

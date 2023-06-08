@@ -9,7 +9,7 @@ import traceback
 
 from common import config
 from common import helper, logger
-from core.game import mem, skill, run_time, person_base
+from core.game import mem, skill, run_time, person_base, map_base
 from core.game import call, init, address
 
 
@@ -19,6 +19,8 @@ class Auto:
     addBuff = False
     # 已完成刷图次数
     completedNum = 0
+    # 每日地图
+    daily_map = []
     # 线程开关
     thread_switch = False
     # 线程句柄
@@ -218,11 +220,20 @@ class Auto:
 
         time.sleep(0.2)
         cls.pack.select_role(init.global_data.completed_role)
+        # 选择角色后初始化动作
         # 角色技能
         init.skill_data = {}
         # 角色名称
         role_name = person_base.get_role_name()
         logger.info("进入角色 {} ".format(role_name), 2)
+        daily_map = list(map(str, config().get("自动配置", "每日地图").split(",")))
+        daily_first = list(map(int, config().get("自动配置", "优先每日").split(",")))
+        cls.daily_map = []
+        if daily_first == 1:
+            for map_temp in daily_map:
+                code = map_base.data.get(map_temp)
+                cls.daily_map.__add__(code)
+
         time.sleep(0.5)
         logger.info("进入角色 {} ".format(init.global_data.completed_role), 2)
         logger.info("开始第 {} 个角色,剩余疲劳 {}".format(init.global_data.completed_role + 1, cls.map_data.get_pl()),
@@ -250,6 +261,7 @@ class Auto:
         remainder = run_time.modulo_algorithm(cls.completedNum, breaks)
         if remainder == 0:
             change = config().getint("自动配置", "休息切角")
+            cls.completedNum += 1
             if change == 1:
                 # 切换角色
                 cls.return_role()
@@ -261,6 +273,9 @@ class Auto:
         map_select = config().getint("自动配置", "手动选择")
         normal_map = list(map(int, config().get("自动配置", "普通地图").split(",")))
         super_map = list(map(int, config().get("自动配置", "英豪地图").split(",")))
+        if len(cls.daily_map) > 0:
+            super_map = cls.daily_map
+
         if auto_model == 1:
             cls.get_map_data()
         if auto_model == 2:
@@ -326,6 +341,7 @@ class Auto:
         """返回角色"""
         logger.info("疲劳值不足 · 即将切换角色", 2)
         time.sleep(0.2)
+        # 返回选择角色清除数据动作
         cls.pack.return_role()
         while cls.thread_switch:
             time.sleep(0.2)
