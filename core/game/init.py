@@ -20,7 +20,7 @@ equip = o.Equip(mem, pack, map_data)
 
 traversal = mt.Screen(mem)
 auto = a.Auto(task, traversal, map_data, pack, pick, equip, game_map)
-skill_data = None
+skill_data = {}
 
 
 def init_empty_addr():

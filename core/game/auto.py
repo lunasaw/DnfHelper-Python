@@ -218,7 +218,9 @@ class Auto:
 
         time.sleep(0.2)
         cls.pack.select_role(init.global_data.completed_role)
-
+        # 角色技能
+        init.skill_data = {}
+        # 角色名称
         role_name = person_base.get_role_name()
         logger.info("进入角色 {} ".format(role_name), 2)
         time.sleep(0.5)
@@ -245,7 +247,13 @@ class Auto:
 
         # 随机处理
         breaks = config().getint("自动配置", "休息次数")
-        run_time.modulo_algorithm(cls.completedNum, breaks)
+        remainder = run_time.modulo_algorithm(cls.completedNum, breaks)
+        if remainder == 0:
+            change = config().getint("自动配置", "休息切角")
+            if change == 1:
+                # 切换角色
+                cls.return_role()
+                return
 
         # 1 剧情 2 搬砖
         auto_model = config().getint("自动配置", "自动模式")
