@@ -1,13 +1,8 @@
 import time
 
-import keyword
-from common import helper
-from core.game import mem, map_data
-from core.game import init, address
-from core.game import skill, init, address
 from common import helper, logger
-import win32gui
 from core.game import mem, fast_call as fc
+from core.game import skill, init, address
 from core.game.addr import address_all
 
 fast_call = fc.FastCall
@@ -408,3 +403,28 @@ def skill_move(skill_index, skill_empty):
 def skill_nothing():
     # dw.WriteByteArr(game.JnSwAddr, []byte{144, 144, 144, 144, 144})
     mem.write_bytes(address_all.技能三无, [144, 144, 144, 144, 144])
+
+
+def run_call(x: int, y: int, cost_time: int):
+    """奔跑call"""
+    if cost_time is None:
+        cost_time = 1000
+    if cost_time < 50:
+        cost_time = 50
+    shell_code = [72, 129, 236, 0, 1, 0, 0, 72, 184]
+    shell_code = helper.add_list(shell_code, helper.int_to_bytes(address.RWCallAddr, 8))
+    shell_code = helper.add_list(shell_code,
+                                 [255, 208, 72, 139, 240, 76, 139, 6, 72, 141, 84, 36, 72, 72,
+                                  139, 206, 65, 255, 144], helper.int_to_bytes(address.BpPyAddr1, 4)
+                                 , [72, 139, 216, 76, 139, 6, 72, 141, 84, 36, 88, 72, 139, 206,
+                                    65, 255, 144],
+                                 helper.int_to_bytes(address.BpPyAddr2, 4), [199, 68, 36, 56],
+                                 helper.int_to_bytes(y, 4))
+    shell_code = helper.add_list(shell_code, [199, 68, 36, 48], helper.int_to_bytes(x, 4))
+    shell_code = helper.add_list(shell_code, [199, 68, 36, 40], helper.int_to_bytes(cost_time, 4))
+    shell_code = helper.add_list(shell_code,
+                                 [199, 68, 36, 32, 14, 0, 0, 0, 76, 139, 203, 76, 139,
+                                  0xC0, 72, 139, 214, 72, 139, 206, 72, 184],
+                                 helper.int_to_bytes(address.BpCallAddr, 8))
+    shell_code = helper.add_list(shell_code, [255, 208, 72, 129, 196, 0, 1, 0, 0, 195])
+    compile_call(shell_code)
