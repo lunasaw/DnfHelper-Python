@@ -1,7 +1,7 @@
 import math
 
-from common import helper
-from core.game import address, mem, call
+from common import helper, logger
+from core.game import address, mem, call, map_base, init
 from core.game.addr import address_all
 
 

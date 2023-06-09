@@ -88,6 +88,9 @@ class Screen:
         skill_type = config().getint("自动配置", "使用技能")
         supper_skill_str = config().get("自动配置", "觉醒技能")
         supper_skill_list = supper_skill_str.split(",")
+        buff_skill_str = config().get("自动配置", "buff技能")
+        buff_skill_list = buff_skill_str.split(",")
+        un_use_skill = buff_skill_list.__add__(supper_skill_list)
         # 地图怪物信息
         monster_map = map_base.map_has_monster()
         if len(monster_map) == 0:
@@ -118,10 +121,10 @@ class Screen:
                 if map_obj.is_boss_room() and map_obj.is_pass() is False:
                     skill.check_skill_down_single_while(supper_skill_list)
                 '''技能'''
-                call.skill_call_power(supper_skill_list)
-                time.sleep(0.3)
+                call.skill_call_power(un_use_skill)
             # 重新获取怪物信息
             monster_map = map_base.map_has_monster()
+        time.sleep(0.5)
 
     def ignore_building(self, ok: bool):
         """无视建筑"""

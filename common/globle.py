@@ -21,6 +21,8 @@ class GlobalData:
     role_count = 0
     # 完成角色
     completed_role = 0
+    # 每日地图
+    daily_map = []
 
 
 # 坐标结构

@@ -19,8 +19,6 @@ class Auto:
     addBuff = False
     # 已完成刷图次数
     completedNum = 0
-    # 每日地图
-    daily_map = []
     # 线程开关
     thread_switch = False
     # 线程句柄
@@ -221,18 +219,7 @@ class Auto:
         time.sleep(0.2)
         cls.pack.select_role(init.global_data.completed_role)
         # 选择角色后初始化动作
-        # 角色技能
-        init.skill_data = {}
-        # 角色名称
-        role_name = person_base.get_role_name()
-        logger.info("进入角色 {} ".format(role_name), 2)
-        daily_map = list(map(str, config().get("自动配置", "每日地图").split(",")))
-        daily_first = list(map(int, config().get("自动配置", "优先每日").split(",")))
-        cls.daily_map = []
-        if daily_first == 1:
-            for map_temp in daily_map:
-                code = map_base.data.get(map_temp)
-                cls.daily_map.__add__(code)
+        cls.select_role_pre()
 
         time.sleep(0.5)
         logger.info("进入角色 {} ".format(init.global_data.completed_role), 2)
@@ -273,8 +260,7 @@ class Auto:
         map_select = config().getint("自动配置", "手动选择")
         normal_map = list(map(int, config().get("自动配置", "普通地图").split(",")))
         super_map = list(map(int, config().get("自动配置", "英豪地图").split(",")))
-        if len(cls.daily_map) > 0:
-            super_map = cls.daily_map
+
 
         if auto_model == 1:
             cls.get_map_data()
@@ -301,6 +287,9 @@ class Auto:
                 if map_ids.__len__() > 0:
                     random_number = random.randint(0, len(map_ids) - 1)
                     init.global_data.map_id = map_ids[random_number]
+
+        if len(init.global_data.daily_map) > 0:
+            init.global_data.map_id = init.global_data.daily_map.pop()
 
         if init.global_data.map_id == 0:
             logger.info("地图编号为空,无法切换区域", 2)
@@ -461,3 +450,18 @@ class Auto:
         if fame < 32523:
             return 3
         return 4
+
+    @classmethod
+    def select_role_pre(cls):
+        # 角色技能
+        init.skill_data = {}
+        # 角色名称
+        role_name = person_base.get_role_name()
+        logger.info("进入角色 {} ".format(role_name), 2)
+        daily_map = list(map(str, config().get("自动配置", "每日地图").split(",")))
+        daily_first = list(map(int, config().get("自动配置", "优先每日").split(",")))
+        init.global_data.daily_map = []
+        if daily_first == 1:
+            for map_temp in daily_map:
+                code = map_base.data.get(map_temp)
+                init.global_data.daily_map.__add__(code)
