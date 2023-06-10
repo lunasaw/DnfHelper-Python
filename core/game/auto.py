@@ -9,7 +9,7 @@ import traceback
 
 from common import config
 from common import helper, logger
-from core.game import mem, skill, run_time, person_base
+from core.game import mem, skill, run_time, person_base, map_base
 from core.game import call, init, address
 
 
@@ -166,6 +166,7 @@ class Auto:
                         if cls.map_data.is_open_door() is True and cls.map_data.is_boss_room() is False:
                             # 捡物品
                             cls.pick.pickup()
+                            time.sleep(random.uniform(0.1, 0.5))
                             # 过图
                             cls.pass_map()
                             logger.info("过图耗时 {}".format(time.time() - start_time), 1)
@@ -218,9 +219,9 @@ class Auto:
 
         time.sleep(0.2)
         cls.pack.select_role(init.global_data.completed_role)
+        # 选择角色后初始化动作
+        cls.select_role_pre()
 
-        role_name = person_base.get_role_name()
-        logger.info("进入角色 {} ".format(role_name), 2)
         time.sleep(0.5)
         logger.info("进入角色 {} ".format(init.global_data.completed_role), 2)
         logger.info("开始第 {} 个角色,剩余疲劳 {}".format(init.global_data.completed_role + 1, cls.map_data.get_pl()),
@@ -245,7 +246,14 @@ class Auto:
 
         # 随机处理
         breaks = config().getint("自动配置", "休息次数")
-        run_time.modulo_algorithm(cls.completedNum, breaks)
+        remainder = run_time.modulo_algorithm(cls.completedNum, breaks)
+        if remainder == 0:
+            change = config().getint("自动配置", "休息切角")
+            cls.completedNum += 1
+            if change == 1:
+                # 切换角色
+                cls.return_role()
+                return
 
         # 1 剧情 2 搬砖
         auto_model = config().getint("自动配置", "自动模式")
@@ -253,9 +261,10 @@ class Auto:
         map_select = config().getint("自动配置", "手动选择")
         normal_map = list(map(int, config().get("自动配置", "普通地图").split(",")))
         super_map = list(map(int, config().get("自动配置", "英豪地图").split(",")))
+
         if auto_model == 1:
             cls.get_map_data()
-        if auto_model == 2:
+        elif auto_model == 2:
             if cls.map_data.get_role_level() < 110:
                 if first_upgrade == 1:
                     cls.get_map_data()
@@ -278,6 +287,16 @@ class Auto:
                 if map_ids.__len__() > 0:
                     random_number = random.randint(0, len(map_ids) - 1)
                     init.global_data.map_id = map_ids[random_number]
+        elif auto_model == 3:
+            # 每日地图
+            if init.global_data.daily_map.__len__() > 0:
+                init.global_data.map_id = init.global_data.daily_map.pop()
+            else:
+                change = config().getint("自动配置", "休息切角")
+                if change == 1:
+                    # 切换角色
+                    cls.return_role()
+                    return
 
         if init.global_data.map_id == 0:
             logger.info("地图编号为空,无法切换区域", 2)
@@ -318,6 +337,7 @@ class Auto:
         """返回角色"""
         logger.info("疲劳值不足 · 即将切换角色", 2)
         time.sleep(0.2)
+        # 返回选择角色清除数据动作
         cls.pack.return_role()
         while cls.thread_switch:
             time.sleep(0.2)
@@ -361,9 +381,9 @@ class Auto:
                 if over_map == 1:
                     call.over_map_call(direction)
                 if over_map == 2:
-                    for i in range(over_map_size):
+                    while cls.map_data.is_open_door() is True:
                         call.drift_over_map(direction)
-                        time.sleep(0.5)
+                        time.sleep(random.uniform(0.2, 0.5))
                     if cls.map_data.is_open_door() is True and cls.map_data.is_boss_room() is False:
                         logger.info("被卡门 强制过图", 1)
                         call.over_map_call(direction)
@@ -437,3 +457,18 @@ class Auto:
         if fame < 32523:
             return 3
         return 4
+
+    @classmethod
+    def select_role_pre(cls):
+        # 角色技能
+        init.skill_data = {}
+        # 角色名称
+        role_name = person_base.get_role_name()
+        logger.info("进入角色 {} ".format(role_name), 2)
+        daily_map = list(map(str, config().get("自动配置", "每日地图").split(",")))
+        daily_first = int(config().get("自动配置", "优先每日"))
+        init.global_data.daily_map = []
+        if daily_first == 1:
+            for map_temp in daily_map:
+                code = map_base.data.get(map_temp)
+                init.global_data.daily_map.append(code)

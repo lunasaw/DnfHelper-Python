@@ -7,8 +7,6 @@ from core.game import address, call, fast_call, init
 from core.game import mem, map_data
 from core.game.addr import address_all, xiaochen_address
 
-skil_data = {}
-
 
 class KeyCode(Enum):
     VK_A = 'a'
@@ -120,42 +118,43 @@ def skill_map_cool_down_all():
 def enter_skill(un_used):
     # 获取当前窗口的焦点
     title = helper.get_process_name()
-    if title == "地下城与勇士：创新世纪":
-        """技能call"""
-        key = skill_map_cool_down(un_used)
-        logger.info("施放技能: {} ".format(key), 1)
-        count = 3
-        while check_skill_down_single(key):
-            count -= 1
-            if count == 0:
-                break
-            helper.key_press_release_list(["x", "x", "x", "z"])
-            time.sleep(0.3)
-            helper.key_press_release(key)
+    if title != "地下城与勇士：创新世纪":
+        return
+    """技能call"""
+    key = skill_map_cool_down(un_used)
+    logger.info("施放技能: {} ".format(key), 1)
+    helper.key_press_release_list(['x', 'x', 'x'])
+    count = 1
+    while check_skill_down_single(key):
+        helper.key_press_release(key)
+        count -= 1
+        if count == 0:
+            break
+        time.sleep(0.3)
 
 
 def check_skill_down_single_while(key_code_list):
     for key in key_code_list:
-        count = 3
+        count = 1
         while check_skill_down_single(key):
+            helper.key_press_release(key)
             count -= 1
             if count == 0:
                 break
             time.sleep(0.3)
-            helper.key_press_release(key)
 
 
 def skill_map_cool_down(un_select=None):
-    global skil_data
-    if skil_data is None or skil_data.__len__() == 0:
-        skil_data = get_skill_map(un_select)
-    keys = list(skil_data.keys())
+    skill_data_tmep = init.skill_data
+    if skill_data_tmep is None or skill_data_tmep.__len__() == 0:
+        init.skill_data = get_skill_map(un_select)
+    keys = list(skill_data_tmep.keys())
     random.shuffle(keys)
     visited = []
     for key_code in keys:
         if un_select.__contains__(key_code):
             continue
-        value = skil_data[key_code]
+        value = skill_data_tmep[key_code]
         if visited.__contains__(value):
             continue
         visited.append(value)
