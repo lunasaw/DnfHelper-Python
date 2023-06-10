@@ -8,7 +8,6 @@ from core.game import mem, map_data
 from core.game.addr import address_all, xiaochen_address
 
 
-
 class KeyCode(Enum):
     VK_A = 'a'
     VK_S = 's'
@@ -119,29 +118,30 @@ def skill_map_cool_down_all():
 def enter_skill(un_used):
     # 获取当前窗口的焦点
     title = helper.get_process_name()
-    if title == "地下城与勇士：创新世纪":
-        """技能call"""
-        key = skill_map_cool_down(un_used)
-        logger.info("施放技能: {} ".format(key), 1)
-        count = 1
-        while check_skill_down_single(key):
-            helper.key_press_release_list(["x", "x", "x", "z"])
-            time.sleep(0.3)
-            helper.key_press_release(key)
-            count -= 1
-            if count == 0:
-                break
+    if title != "地下城与勇士：创新世纪":
+        return
+    """技能call"""
+    key = skill_map_cool_down(un_used)
+    logger.info("施放技能: {} ".format(key), 1)
+    helper.key_press_release_list(['x', 'x', 'x'])
+    count = 1
+    while check_skill_down_single(key):
+        helper.key_press_release(key)
+        count -= 1
+        if count == 0:
+            break
+        time.sleep(0.3)
 
 
 def check_skill_down_single_while(key_code_list):
     for key in key_code_list:
-        count = 3
+        count = 1
         while check_skill_down_single(key):
+            helper.key_press_release(key)
             count -= 1
             if count == 0:
                 break
             time.sleep(0.3)
-            helper.key_press_release(key)
 
 
 def skill_map_cool_down(un_select=None):

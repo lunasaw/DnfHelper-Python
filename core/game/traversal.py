@@ -100,11 +100,12 @@ class Screen:
             return
             # 地址
         obj_blood = 100000
+        time.sleep(random.uniform(0.5, 1))
         while obj_blood > 200 and map_obj.is_open_door() is False and len(monster_map) > 0:
             rw_addr = call.person_ptr()
             target_addr = next(iter(monster_map))
             obj_blood = mem.read_long(target_addr + address.GwXlAddr)
-            if obj_blood < 0:
+            if obj_blood <= 0:
                 continue
             # 位置
             monster = monster_map[target_addr]
@@ -123,8 +124,8 @@ class Screen:
                 '''技能'''
                 call.skill_call_power(un_use_skill)
             # 重新获取怪物信息
+            time.sleep(0.5)
             monster_map = map_base.map_has_monster()
-        time.sleep(0.5)
 
     def ignore_building(self, ok: bool):
         """无视建筑"""

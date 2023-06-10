@@ -166,6 +166,7 @@ class Auto:
                         if cls.map_data.is_open_door() is True and cls.map_data.is_boss_room() is False:
                             # 捡物品
                             cls.pick.pickup()
+                            time.sleep(random.uniform(0.1, 0.5))
                             # 过图
                             cls.pass_map()
                             logger.info("过图耗时 {}".format(time.time() - start_time), 1)
@@ -261,10 +262,9 @@ class Auto:
         normal_map = list(map(int, config().get("自动配置", "普通地图").split(",")))
         super_map = list(map(int, config().get("自动配置", "英豪地图").split(",")))
 
-
         if auto_model == 1:
             cls.get_map_data()
-        if auto_model == 2:
+        elif auto_model == 2:
             if cls.map_data.get_role_level() < 110:
                 if first_upgrade == 1:
                     cls.get_map_data()
@@ -287,9 +287,16 @@ class Auto:
                 if map_ids.__len__() > 0:
                     random_number = random.randint(0, len(map_ids) - 1)
                     init.global_data.map_id = map_ids[random_number]
-
-        if len(init.global_data.daily_map) > 0:
-            init.global_data.map_id = init.global_data.daily_map.pop()
+        elif auto_model == 3:
+            # 每日地图
+            if init.global_data.daily_map.__len__() > 0:
+                init.global_data.map_id = init.global_data.daily_map.pop()
+            else:
+                change = config().getint("自动配置", "休息切角")
+                if change == 1:
+                    # 切换角色
+                    cls.return_role()
+                    return
 
         if init.global_data.map_id == 0:
             logger.info("地图编号为空,无法切换区域", 2)
@@ -374,9 +381,9 @@ class Auto:
                 if over_map == 1:
                     call.over_map_call(direction)
                 if over_map == 2:
-                    for i in range(over_map_size):
+                    while cls.map_data.is_open_door() is True:
                         call.drift_over_map(direction)
-                        time.sleep(0.5)
+                        time.sleep(random.uniform(0.2, 0.5))
                     if cls.map_data.is_open_door() is True and cls.map_data.is_boss_room() is False:
                         logger.info("被卡门 强制过图", 1)
                         call.over_map_call(direction)
@@ -459,9 +466,9 @@ class Auto:
         role_name = person_base.get_role_name()
         logger.info("进入角色 {} ".format(role_name), 2)
         daily_map = list(map(str, config().get("自动配置", "每日地图").split(",")))
-        daily_first = list(map(int, config().get("自动配置", "优先每日").split(",")))
+        daily_first = int(config().get("自动配置", "优先每日"))
         init.global_data.daily_map = []
         if daily_first == 1:
             for map_temp in daily_map:
                 code = map_base.data.get(map_temp)
-                init.global_data.daily_map.__add__(code)
+                init.global_data.daily_map.append(code)

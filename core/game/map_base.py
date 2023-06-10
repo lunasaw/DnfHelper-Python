@@ -66,9 +66,9 @@ def map_has_goods():
 # 地图是否有怪物
 def map_has_monster():
     start_time = time.time()
-    data = map_has_item(怪物校验, 1)
+    monster_data = map_has_item(怪物校验, 1)
     logger.info("地图是否有怪物耗时: {}".format(time.time() - start_time), 1)
-    return data
+    return monster_data
 
 
 def map_has_cross_hide():
