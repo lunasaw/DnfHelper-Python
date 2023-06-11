@@ -381,9 +381,11 @@ class Auto:
                 if over_map == 1:
                     call.over_map_call(direction)
                 if over_map == 2:
-                    while cls.map_data.is_open_door() is True:
+                    count = 3
+                    while cls.map_data.is_open_door() is True and count > 0:
                         call.drift_over_map(direction)
                         time.sleep(random.uniform(0.2, 0.5))
+                        count -= 1
                     if cls.map_data.is_open_door() is True and cls.map_data.is_boss_room() is False:
                         logger.info("被卡门 强制过图", 1)
                         call.over_map_call(direction)
@@ -428,6 +430,8 @@ class Auto:
             while cls.map_data.get_stat() == 3 or not cls.map_data.is_town():
                 time.sleep(0.5)
                 helper.key_press_release(out_value)
+            if cls.map_data.map_jbl():
+                helper.key_press_release('esc')
 
         if out_type == 0:
             time.sleep(5)

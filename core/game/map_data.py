@@ -126,9 +126,10 @@ class MapData:
         cross_coord = self.cross_room()
         if cross_coord is None:
             return
-        call.drift_call(call.person_ptr(), cross_coord.x, cross_coord.y, 0, 50)
+        target_addr = next(iter(cross_coord))
+        call.drift_call(call.person_ptr(), target_addr.x, target_addr.y, 0, 50)
 
-    def cross_room(self) -> object:
+    def cross_room(self) -> dict:
         """裂缝是否出现"""
         item_map = {}
         mem = self.mem
