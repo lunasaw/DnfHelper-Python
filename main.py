@@ -9,7 +9,7 @@ from plugins.driver import init_driver, exist_driver
 if __name__ == '__main__':
     try:
         globle.cmd = "cmd"
-        init_driver("wvc")
+        init_driver("ACE-GameK")
         logger.info("驱动加载成功", 1)
         process_id = helper.get_process_id_by_name("DNF.exe")
         if process_id == 0:
@@ -28,7 +28,6 @@ if __name__ == '__main__':
         init.hotkey2()
     except KeyboardInterrupt as e:
         print("信道推出")
-        exist_driver()
     except Exception as err:
         except_type, _, except_traceback = sys.exc_info()
         err_str = ','.join(str(i) for i in err.args)
@@ -36,3 +35,6 @@ if __name__ == '__main__':
         print(err_str)
         for i in traceback.extract_tb(except_traceback):
             print("函数{},文件:{},行:{}".format(i.name, i.filename, i.lineno))
+    finally:
+        exist_driver()
+        logger.info("驱动推出", 1)
