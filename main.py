@@ -1,7 +1,7 @@
 import sys
 import traceback
 
-from common import helper, logger, globle
+from common import helper, logger, globle, config
 from core.game import init
 from core.game import mem
 from plugins.driver import init_driver, exist_driver
@@ -9,8 +9,11 @@ from plugins.driver import init_driver, exist_driver
 if __name__ == '__main__':
     try:
         globle.cmd = "cmd"
-        init_driver("ACE-GameK")
-        logger.info("驱动加载成功", 1)
+        drive = config().getint("自动配置", "驱动加载")
+        if drive == 1:
+            drive_name = config().getint("自动配置", "驱动名称")
+            init_driver(drive_name)
+            logger.info("驱动加载成功", 1)
         process_id = helper.get_process_id_by_name("DNF.exe")
         if process_id == 0:
             helper.message_box("请打开dnf后运行")
@@ -21,7 +24,6 @@ if __name__ == '__main__':
         init.init_empty_addr()
         # 初始化fastcall
         init.call.init_call()
-        # init.init_person()
 
         logger.info("加载成功-欢迎使用", 1)
         logger.info("当前时间：{}".format(helper.get_now_date()), 1)
@@ -36,5 +38,7 @@ if __name__ == '__main__':
         for i in traceback.extract_tb(except_traceback):
             print("函数{},文件:{},行:{}".format(i.name, i.filename, i.lineno))
     finally:
-        exist_driver()
-        logger.info("驱动推出", 1)
+        drive = config().getint("自动配置", "驱动加载")
+        if drive == 1:
+            exist_driver()
+            logger.info("驱动推出", 1)

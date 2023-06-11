@@ -425,10 +425,9 @@ class Auto:
         out_type = config().getint("自动配置", "出图方式")
         if out_type == 2:
             out_value = config().get("自动配置", "出图按键")
-            for i in range(3):
+            while cls.map_data.get_stat() == 3 or not cls.map_data.is_town():
+                time.sleep(0.5)
                 helper.key_press_release(out_value)
-            if cls.map_data.get_stat() == 1 and cls.map_data.is_town():
-                return
 
         if out_type == 0:
             time.sleep(5)
