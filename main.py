@@ -4,7 +4,7 @@ import traceback
 from common import helper, logger, globle
 from core.game import init
 from core.game import mem
-from plugins.driver import init_driver
+from plugins.driver import init_driver, exist_driver
 
 if __name__ == '__main__':
     try:
@@ -28,6 +28,7 @@ if __name__ == '__main__':
         init.hotkey2()
     except KeyboardInterrupt as e:
         print("信道推出")
+        exist_driver()
     except Exception as err:
         except_type, _, except_traceback = sys.exc_info()
         err_str = ','.join(str(i) for i in err.args)
