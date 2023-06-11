@@ -37,7 +37,7 @@ def init_empty_addr():
 
 
 def hotkey2():
-    keyboard.add_hotkey('f1', auto.test_func)
+    keyboard.add_hotkey('f1', auto.skill_nothing)
     # 透明
     keyboard.add_hotkey('f2', auto.hide_body)
     # 跟随打怪

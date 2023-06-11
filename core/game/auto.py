@@ -64,11 +64,11 @@ class Auto:
         call.hide_call(call.person_ptr())
 
     @classmethod
-    def un_hide_body(cls):
+    def skill_nothing(cls):
         if cls.map_data.get_stat() == 3:
             # 透明call
-            logger.info("关闭透明 {}", 2)
-            call.hide_call(call.person_ptr())
+            logger.info("技能三无 {}", 2)
+            call.skill_nothing()
 
     @classmethod
     def follow_monster_switch(cls):

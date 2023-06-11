@@ -11,3 +11,7 @@ def init_driver(driver_name: str):
 
     if not driver.load_driver(driver_path, driver_name, driver_name):
         raise Exception("驱动加载失败")
+
+
+def exist_driver():
+    driver.un_load_driver()
