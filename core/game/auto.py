@@ -430,8 +430,8 @@ class Auto:
             while cls.map_data.get_stat() == 3 or not cls.map_data.is_town():
                 time.sleep(0.5)
                 helper.key_press_release(out_value)
-            if cls.map_data.map_jbl():
-                helper.key_press_release('esc')
+                if cls.map_data.map_jbl():
+                    helper.key_press_release('esc')
 
         if out_type == 0:
             time.sleep(5)
