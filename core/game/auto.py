@@ -7,6 +7,8 @@ import sys
 import time
 import traceback
 
+from plugins.driver import driver
+
 from common import config
 from common import helper, logger
 from core.game import mem, skill, run_time, person_base, map_base
@@ -215,6 +217,8 @@ class Auto:
             logger.info("自动刷图 [ x ]", 2)
             cls.thread_switch = False
             init.global_data.auto_switch = False
+            driver.un_load_driver()
+            exit(0)
             return
 
         time.sleep(0.2)
