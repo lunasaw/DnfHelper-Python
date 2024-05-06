@@ -160,6 +160,8 @@ def drift_call(ptr, x, y, z, speed):
     :param speed: int 速度
     :return:
     """
+    coordinate_move(x, y)
+    return
     shell_code = [72, 129, 236, 0, 8, 0, 0]
     shell_code = helper.add_list(shell_code, [185, 240, 0, 0, 0])
     shell_code = helper.add_list(shell_code, [72, 184], helper.int_to_bytes(address.SqNcCallAddr, 8))
@@ -352,3 +354,20 @@ def cool_down_call(skill_addr):
     helper.add_list(shell_code, [72, 131, 196, 32])
     compile_call(shell_code)
     return mem.read_int(empty_addr) < 1
+
+
+# 坐标移动
+def coordinate_move(x: int, y: int):
+    # .常量 人物坐标_1, "328", , ,  0x148 创新中心获取
+    # .常量 人物坐标_2, "69", , ,  0x45 创新中心获取
+
+    # 获取人物指针
+    addr = person_ptr()
+    # 读取坐标指针
+    coordinate_ptr = mem.read_long(mem.read_long(addr + 0x148) + 8)
+    # 计算坐标偏移量
+    offset = coordinate_ptr + 0x45
+
+    # 写入坐标值
+    mem.write_float(offset, float(x))
+    mem.write_float(offset + 4, float(y))
