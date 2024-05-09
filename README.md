@@ -9,9 +9,6 @@
 5. *** 管理员方式运行 python main.py 然后登录游戏***
 6. 功能热键 F1.全屏打怪 End.自动刷图
 ```
-
-### :red_circle: 交流群: star后带上你的github账号加群,否则一律拒绝
-
 ### 点击链接加入群聊【毒奶粉研究院】：https://t.me/+D3V4dfGWE_JjYzU1
 
 ## Stargazers over time
